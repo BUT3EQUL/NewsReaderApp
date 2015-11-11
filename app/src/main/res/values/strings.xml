@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">NewsReaderApp</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="web_title">Sony Products News</string>
+    <string name="title_activity_detail">DetailActivity</string>
+
+    <string name="refresh_complete">Refreshed news list</string>
+    <string name="refresh_error">Failed to refresh news list</string>
+
+    <string name="check_text_all">View on Browser</string>
+</resources>
