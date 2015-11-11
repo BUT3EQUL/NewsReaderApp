@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="web_title">ソニー製品情報 新着情報</string>
+
+    <string name="refresh_complete">リストを更新しました</string>
+    <string name="refresh_error">リストの更新に失敗しました</string>
+
+    <string name="check_text_all">記事全文をブラウザで確認</string>
+</resources>
