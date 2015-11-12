@@ -1,9 +1,11 @@
 package com.sample.android.newsreader.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -21,6 +23,8 @@ import com.sample.android.newsreader.app.data.FetchNewsTask;
 import com.sample.android.newsreader.app.data.FetchTask;
 import com.sample.android.newsreader.app.data.NewsDataAdapter;
 import com.sample.android.newsreader.app.provider.NewsDataProvider;
+
+import java.lang.ref.WeakReference;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -63,7 +67,7 @@ public class MainFragment extends ListFragment implements SwipeRefreshLayout.OnR
         setListAdapter(mCursorAdapter);
 
         mCallback = new FetchTaskCallback();
-        mOnStatusListener = new FetchTaskOnStatusListener();
+        mOnStatusListener = new FetchTaskOnStatusListener(mHandler);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
@@ -139,26 +143,61 @@ public class MainFragment extends ListFragment implements SwipeRefreshLayout.OnR
     }
 
     private class FetchTaskOnStatusListener implements FetchTask.OnStatusListener {
+
+        private final ToastRunnable mToastComplete;
+
+        private final ToastRunnable mToastError;
+
+        private final Handler mHandler;
+
+        public FetchTaskOnStatusListener(Handler handler) {
+            if (handler == null) {
+                mHandler = new Handler();
+            } else {
+                mHandler = handler;
+            }
+
+            mToastComplete = new ToastRunnable(getContext(), R.string.refresh_complete, Toast.LENGTH_SHORT);
+            mToastError = new ToastRunnable(getContext(), R.string.refresh_error, Toast.LENGTH_SHORT);
+        }
+
+        public FetchTaskOnStatusListener() {
+            this(null);
+        }
+
         @Override
         public void onComplete() {
-            post(R.string.refresh_complete);
+            mToastComplete.post(mHandler);
        }
 
         @Override
         public void onError(String message, Throwable exception) {
             Log.e("Status", message, exception);
-            post(R.string.refresh_error);
+            mToastError.post(mHandler);
+        }
+    }
+
+    private static class ToastRunnable implements Runnable {
+
+        private final WeakReference<Context> mContext;
+
+        private final int mResourceId;
+
+        private final int mDuration;
+
+        public ToastRunnable(Context context, int resourceId, int duration) {
+            mContext = new WeakReference<>(context);
+            mResourceId = resourceId;
+            mDuration = duration;
         }
 
-        private void post(final int resourceId) {
-            if (mHandler != null) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getContext(), resourceId, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+        @Override
+        public void run() {
+            Toast.makeText(mContext.get(), mResourceId, mDuration).show();
+        }
+
+        public void post(@NonNull Handler handler) {
+            handler.post(this);
         }
     }
 }

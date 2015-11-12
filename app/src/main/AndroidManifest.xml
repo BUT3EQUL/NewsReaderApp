@@ -23,7 +23,8 @@
 
         <provider
             android:name=".provider.NewsDataProvider"
-            android:authorities="com.sample.android.newsreader.app" />
+            android:authorities="com.sample.android.newsreader.app"
+            android:exported="false" />
 
         <activity
             android:name=".DetailActivity"
