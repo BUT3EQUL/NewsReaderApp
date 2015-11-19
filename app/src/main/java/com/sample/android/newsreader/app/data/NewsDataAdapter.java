@@ -2,6 +2,8 @@ package com.sample.android.newsreader.app.data;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +24,7 @@ public class NewsDataAdapter extends CursorAdapter {
 
     private WeakReference<Context> mContext = null;
 
-    public NewsDataAdapter(Context context, Cursor cursor, int flags) {
+    public NewsDataAdapter(@NonNull Context context, @Nullable Cursor cursor, int flags) {
         super(context, cursor, flags);
         mContext = new WeakReference<>(context);
     }
@@ -56,7 +58,7 @@ public class NewsDataAdapter extends CursorAdapter {
         final TextView headline;
         final TextView publishDate;
 
-        public ViewHolder(View view) {
+        public ViewHolder(@NonNull View view) {
             headline = (TextView) view.findViewById(android.R.id.text1);
             publishDate = (TextView) view.findViewById(android.R.id.text2);
         }

@@ -1,5 +1,6 @@
 package jp.co.recruit_mp.android.rmp_appiraterkit;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -81,7 +82,8 @@ public class AppiraterDialog extends Dialog implements DialogInterface {
             dialog.setCancelable(true);
 
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            LinearLayout parent = (LinearLayout) inflater.inflate(R.layout.rmp_appiraterkit_dialog, null, false);
+            @SuppressLint("InflateParams") LinearLayout parent =
+                    (LinearLayout) inflater.inflate(R.layout.rmp_appiraterkit_dialog, null, false);
 
             TextView titleView = (TextView) parent.findViewById(R.id.title);
             if (titleView != null) {
@@ -102,7 +104,8 @@ public class AppiraterDialog extends Dialog implements DialogInterface {
             }
 
             for (Map.Entry<CharSequence, View.OnClickListener> entry : mButtonDataMap.entrySet()) {
-                View buttonLayout = inflater.inflate(R.layout.rmp_appiraterkit_dialog_button, null);
+                @SuppressLint("InflateParams") View buttonLayout =
+                        inflater.inflate(R.layout.rmp_appiraterkit_dialog_button, null);
                 final Button button = (Button) buttonLayout.findViewById(R.id.button);
                 if (entry != null) {
                     CharSequence text = entry.getKey();

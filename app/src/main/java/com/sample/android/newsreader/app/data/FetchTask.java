@@ -1,6 +1,7 @@
 package com.sample.android.newsreader.app.data;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -8,12 +9,12 @@ public abstract class FetchTask<Params, Progress, Result> extends AsyncTask<Para
 
     public interface Callback<Result> {
         void onPreExecute();
-        void onPostExecute(Result result);
+        void onPostExecute(@Nullable Result result);
     }
 
     public interface OnStatusListener {
         void onComplete();
-        void onError(String message, Throwable exception);
+        void onError(@Nullable String message, @Nullable Throwable exception);
     }
 
     protected Callback<Result> mCallback = null;
@@ -22,11 +23,11 @@ public abstract class FetchTask<Params, Progress, Result> extends AsyncTask<Para
 
     private boolean mIsTaskLive = false;
 
-    public void setCallback(Callback<Result> callback) {
+    public void setCallback(@Nullable Callback<Result> callback) {
         mCallback = callback;
     }
 
-    public void setOnStatusListener(OnStatusListener listener) {
+    public void setOnStatusListener(@Nullable OnStatusListener listener) {
         mOnStatusListener = listener;
     }
 
@@ -39,18 +40,23 @@ public abstract class FetchTask<Params, Progress, Result> extends AsyncTask<Para
         Log.d("FetchTask", "onPreExecute flag=" + mIsTaskLive);
     }
 
+    @SafeVarargs
+    @Nullable
     @Override
-    protected final Result doInBackground(Params... params) {
+    protected final Result doInBackground(@Nullable Params... params) {
         try {
-            return onBackground(params);
+            if (params != null) {
+                return onBackground(params);
+            }
         } catch (Exception e) {
             onError(e);
-            return null;
         }
+        return null;
     }
 
     @Nullable
-    protected abstract Result onBackground(Params... params) throws Exception;
+    @SuppressWarnings("unchecked")
+    protected abstract Result onBackground(@NonNull Params... params) throws Exception;
 
     protected void onError(Exception e) {
         if (mIsTaskLive && mOnStatusListener != null) {
@@ -61,7 +67,7 @@ public abstract class FetchTask<Params, Progress, Result> extends AsyncTask<Para
     }
 
     @Override
-    protected void onPostExecute(Result result) {
+    protected void onPostExecute(@Nullable Result result) {
         if (mIsTaskLive && mOnStatusListener != null) {
             Log.d("FetchTask", "onComplete");
             mOnStatusListener.onComplete();

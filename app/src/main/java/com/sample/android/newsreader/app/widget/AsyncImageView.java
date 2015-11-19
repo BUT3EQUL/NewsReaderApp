@@ -4,10 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+
+import com.sample.android.newsreader.app.R;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,12 +26,6 @@ public class AsyncImageView extends ImageView {
 
     private static final Object sMapLock = new Object();
 
-    private static final float LEVEL_VISIBLE = 1.0f;
-
-    private static final float LEVEL_INVISIBLE = 0.0f;
-
-    private static final long DURATION = 500L;
-
     private URL mURL = null;
 
     private Bitmap mBitmap = null;
@@ -37,15 +34,15 @@ public class AsyncImageView extends ImageView {
 
     private Set<URL> mURLSet = null;
 
-    public AsyncImageView(Context context) {
+    public AsyncImageView(@NonNull Context context) {
         this(context, null);
     }
 
-    public AsyncImageView(Context context, AttributeSet attrs) {
+    public AsyncImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public AsyncImageView(Context context, AttributeSet attrs, int defStyle) {
+    public AsyncImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         mLoadImageTaskCallback = new ImageLoadCallback();
@@ -53,25 +50,21 @@ public class AsyncImageView extends ImageView {
     }
 
     @Override
-    public void setImageBitmap(Bitmap bitmap) {
+    public void setImageBitmap(@Nullable Bitmap bitmap) {
         if (mBitmap != null && !mBitmap.equals(bitmap)) {
-            Animation animation = new AlphaAnimation(LEVEL_VISIBLE, LEVEL_INVISIBLE);
-            animation.setDuration(DURATION);
-            setAnimation(animation);
+            setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.image_fade_out));
         }
         super.setImageBitmap(bitmap);
 
-        Animation animation = new AlphaAnimation(LEVEL_INVISIBLE, LEVEL_VISIBLE);
-        animation.setDuration(DURATION);
-        setAnimation(animation);
+        setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.image_fade_in));
     }
 
-    public void setImageLoadedBitmap(Bitmap bitmap) {
+    public void setImageLoadedBitmap(@Nullable Bitmap bitmap) {
         addBitmap(mURL, bitmap);
         setImageBitmap(bitmap);
     }
 
-    public void setImageURL(URL url) {
+    public void setImageURL(@Nullable URL url) {
         if (url == null || url.equals(mURL)) {
             return;
         }
@@ -88,6 +81,7 @@ public class AsyncImageView extends ImageView {
         }
     }
 
+    @SuppressWarnings("unused")
     public URL getImageURL() {
         return mURL;
     }
@@ -103,7 +97,7 @@ public class AsyncImageView extends ImageView {
         super.finalize();
     }
 
-    private static boolean addBitmap(URL url, Bitmap bitmap) {
+    private static boolean addBitmap(@NonNull URL url, @Nullable Bitmap bitmap) {
         synchronized (sMapLock) {
             if (BITMAP_MAP.containsKey(url)) {
                 return false;
@@ -114,7 +108,7 @@ public class AsyncImageView extends ImageView {
         }
     }
 
-    private static boolean removeBitmap(URL url) {
+    private static boolean removeBitmap(@NonNull URL url) {
         synchronized (sMapLock) {
             if (!BITMAP_MAP.containsKey(url)) {
                 return false;
@@ -137,11 +131,11 @@ public class AsyncImageView extends ImageView {
         }
     }
 
-    private static class LoadImageTask extends AsyncTask<Bitmap, Void, Bitmap> {
+    private static class LoadImageTask extends AsyncTask<Void, Void, Bitmap> {
 
         interface Callback {
-            void onLoadFinished(Bitmap bitmap);
-            void onLoadCanceled(Throwable throwable);
+            void onLoadFinished(@Nullable Bitmap bitmap);
+            void onLoadCanceled(@Nullable Throwable throwable);
         }
 
         private Callback mCallback = null;
@@ -155,7 +149,7 @@ public class AsyncImageView extends ImageView {
         }
 
         @Override
-        protected Bitmap doInBackground(Bitmap... params) {
+        protected Bitmap doInBackground(@Nullable Void... params) {
             Bitmap bitmap = null;
             try {
                 InputStream inputStream = mURL.openStream();
@@ -167,7 +161,7 @@ public class AsyncImageView extends ImageView {
         }
 
         @Override
-        protected void onPostExecute(Bitmap bitmap) {
+        protected void onPostExecute(@Nullable Bitmap bitmap) {
             if (mCallback != null) {
                 if (bitmap != null) {
                     mCallback.onLoadFinished(bitmap);
@@ -177,8 +171,10 @@ public class AsyncImageView extends ImageView {
             }
         }
 
-        public void setCallback(Callback callback) {
-            mCallback = callback;
+        public void setCallback(@Nullable Callback callback) {
+            if (mCallback != null && !mCallback.equals(callback)) {
+                mCallback = callback;
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ package jp.co.recruit_mp.android.rmp_appiraterkit;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 
@@ -10,7 +11,7 @@ abstract class DialogBuilder<DialogType extends Dialog> {
 
     private WeakReference<Context> mContext = null;
 
-    protected DialogBuilder(Context context) {
+    protected DialogBuilder(@NonNull Context context) {
         mContext = new WeakReference<>(context);
     }
 

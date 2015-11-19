@@ -103,22 +103,20 @@ public class NewsDataProvider extends ContentProvider {
         }
 
         private static void createDatabase(SQLiteDatabase db) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("CREATE TABLE ").append(Contract.TABLE).append(" ( ");
-            buffer.append(Contract._ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
-            buffer.append(Contract.COLUMN_HEADLINE).append(" TEXT NOT NULL, ");
-            buffer.append(Contract.COLUMN_DESC).append(" TEXT NOT NULL, ");
-            buffer.append(Contract.COLUMN_LINK).append(" TEXT NOT NULL, ");
-            buffer.append(Contract.COLUMN_DATE).append(" INTEGER );");
+            final String sql = "CREAE TABLE " + Contract.TABLE + " ( "
+                    + Contract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + Contract.COLUMN_HEADLINE + " TEXT NOT NULL, "
+                    + Contract.COLUMN_DESC + " TEXT NOT NULL, "
+                    + Contract.COLUMN_LINK + " TEXT NOT NULL, "
+                    + Contract.COLUMN_DATE + " INTEGER );";
 
-            db.execSQL(buffer.toString());
+            db.execSQL(sql);
         }
 
         private static void dropDatabase(SQLiteDatabase db) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("DROP TABLE IF EXISTS ").append(Contract.TABLE);
+            final String sql = "DROP TABLE IF EXISTS " + Contract.TABLE;
 
-            db.execSQL(buffer.toString());
+            db.execSQL(sql);
         }
     }
 

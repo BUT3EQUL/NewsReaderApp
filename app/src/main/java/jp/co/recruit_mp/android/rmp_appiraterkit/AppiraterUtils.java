@@ -20,24 +20,38 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 /**
  * AppiraterKit utilities.
  */
+@SuppressWarnings("unused")
 public class AppiraterUtils {
     private static final String TAG = "AppiraterUtils";
 
-    private AppiraterUtils() {}
+    private static final String STORE_SCHEME = "market";
+
+    private static final String STORE_PATH = "details";
+
+    private static final String STORE_QUERY_ID = "id";
+
+    private AppiraterUtils() {
+    }
 
     /**
      * Launch this app store site.
      *
      * @param context Context
      */
-    public static void launchStore(Context context) {
+    public static void launchStore(@NonNull Context context) {
         try {
-            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + context.getPackageName())));
+            Uri uri = new Uri.Builder()
+                    .scheme(STORE_SCHEME)
+                    .appendPath(STORE_PATH)
+                    .appendQueryParameter(STORE_QUERY_ID, context.getPackageName())
+                    .build();
+            context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
         } catch (ActivityNotFoundException e) {
             Log.w(TAG, "Occurred ActivityNotFoundException.", e);
         }

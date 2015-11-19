@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -53,7 +54,7 @@ public class MainFragment extends ListFragment implements SwipeRefreshLayout.OnR
 
     private FetchTask.OnStatusListener mOnStatusListener = null;
 
-    private Handler mHandler = null;
+    private final Handler mHandler = new Handler();
 
     public MainFragment() {
     }
@@ -61,8 +62,6 @@ public class MainFragment extends ListFragment implements SwipeRefreshLayout.OnR
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mHandler = new Handler();
-
         mCursorAdapter = new NewsDataAdapter(getActivity(), null, 0);
         setListAdapter(mCursorAdapter);
 
@@ -150,7 +149,7 @@ public class MainFragment extends ListFragment implements SwipeRefreshLayout.OnR
 
         private final Handler mHandler;
 
-        public FetchTaskOnStatusListener(Handler handler) {
+        public FetchTaskOnStatusListener(@Nullable Handler handler) {
             if (handler == null) {
                 mHandler = new Handler();
             } else {
@@ -161,6 +160,7 @@ public class MainFragment extends ListFragment implements SwipeRefreshLayout.OnR
             mToastError = new ToastRunnable(getContext(), R.string.refresh_error, Toast.LENGTH_SHORT);
         }
 
+        @SuppressWarnings("unused")
         public FetchTaskOnStatusListener() {
             this(null);
         }
@@ -185,7 +185,7 @@ public class MainFragment extends ListFragment implements SwipeRefreshLayout.OnR
 
         private final int mDuration;
 
-        public ToastRunnable(Context context, int resourceId, int duration) {
+        public ToastRunnable(@NonNull Context context, int resourceId, int duration) {
             mContext = new WeakReference<>(context);
             mResourceId = resourceId;
             mDuration = duration;

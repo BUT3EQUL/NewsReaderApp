@@ -3,6 +3,8 @@ package com.sample.android.newsreader.app.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Xml;
 
 import com.sample.android.newsreader.app.BuildConfig;
@@ -47,12 +49,12 @@ public class FetchNewsTask extends FetchTask<String, Void, Void> {
 
     private WeakReference<Context> mContext = null;
 
-    public FetchNewsTask(Context context) {
+    public FetchNewsTask(@NonNull Context context) {
         mContext = new WeakReference<>(context);
     }
 
     @Override
-    protected Void onBackground(String... params) throws Exception {
+    protected Void onBackground(@NonNull String... params) throws Exception {
         Cursor cursor = getContext().getContentResolver().query(
                 NewsDataProvider.Contract.CONTENT_URI, PROJECTIONS, null, null, null);
         ContentValues[] backupColumns = null;
@@ -86,7 +88,7 @@ public class FetchNewsTask extends FetchTask<String, Void, Void> {
             connection = (HttpURLConnection) url.openConnection();
 
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
                 buffer.append(line);
@@ -121,7 +123,7 @@ public class FetchNewsTask extends FetchTask<String, Void, Void> {
         return mContext.get();
     }
 
-    private void parse(String source) {
+    private void parse(@NonNull String source) {
         List<ContentValues> insertValues = new ArrayList<>();
         XmlPullParser parser = Xml.newPullParser();
         try {
@@ -147,7 +149,7 @@ public class FetchNewsTask extends FetchTask<String, Void, Void> {
         }
     }
 
-    private ContentValues parseNewsData(XmlPullParser parser)
+    private ContentValues parseNewsData(@NonNull XmlPullParser parser)
             throws XmlPullParserException, IOException {
         ContentValues values = new ContentValues();
         int eventType;
@@ -173,7 +175,7 @@ public class FetchNewsTask extends FetchTask<String, Void, Void> {
         return values;
     }
 
-    private static long parsePublishDate(String s) {
+    private static long parsePublishDate(@NonNull String s) {
         SimpleDateFormat formatter = new SimpleDateFormat(BuildConfig.INPUT_DATE_FORMAT, Locale.US);
         Date date = null;
         try {
@@ -190,7 +192,7 @@ public class FetchNewsTask extends FetchTask<String, Void, Void> {
         return -1;
     }
 
-    private static void closeStream(Closeable c) {
+    private static void closeStream(@NonNull Closeable c) {
         try {
             c.close();
         } catch (IOException e) {
